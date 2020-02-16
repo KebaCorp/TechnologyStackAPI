@@ -8,4 +8,6 @@ type Type struct {
 	CreatorUserId int
 	CreatedAt     string
 	UpdatedAt     string
+	Stages        []*Stage
+	Technologies  []*Technology
 }

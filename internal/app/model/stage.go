@@ -8,4 +8,5 @@ type Stage struct {
 	CreatorUserId int
 	CreatedAt     string
 	UpdatedAt     string
+	Technologies  []*Technology
 }

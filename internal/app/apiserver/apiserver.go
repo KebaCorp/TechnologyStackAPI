@@ -73,10 +73,23 @@ func (s *APIServer) configureRouter() {
 
 func (s *APIServer) handleTechnologies() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// t, err := s.store.Technology().FindAll()
-		// t, err := s.store.Stage().FindAll()
-		t, err := s.store.Type().FindAll()
-		js, err := json.Marshal(t)
+		technologies, err := s.store.Technology().FindAll()
+		stages, err := s.store.Stage().FindAll()
+		types, err := s.store.Type().FindAll()
+
+		for tsKey, tsValue := range types {
+			for _, stValue := range stages {
+				for _, tchValue := range technologies {
+					if tsValue.ID == tchValue.TypeId && stValue.ID == tchValue.StageId {
+						stValue.Technologies = append(stValue.Technologies, tchValue)
+						break
+					}
+				}
+				types[tsKey].Stages = append(types[tsKey].Stages, stValue)
+			}
+		}
+
+		js, err := json.Marshal(types)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

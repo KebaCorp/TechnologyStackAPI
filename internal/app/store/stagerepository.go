@@ -13,7 +13,7 @@ type StageRepository struct {
 
 // FindAll ...
 func (r *StageRepository) FindAll() ([]*model.Stage, error) {
-	rows, err := r.store.db.Query("SELECT * FROM stages WHERE is_deleted IS NOT true")
+	rows, err := r.store.db.Query("SELECT * FROM stages WHERE is_deleted IS NOT true ORDER BY id ASC")
 
 	if err != nil {
 		return nil, err
