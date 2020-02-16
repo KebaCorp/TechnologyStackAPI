@@ -9,3 +9,16 @@ services:
       - .:/go/src/app
     working_dir: /go/src/app
     command: go run main.go
+
+  postgresql:
+    restart: always
+    image: sameersbn/postgresql:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - DEBUG=false
+      - DB_USER=userexample
+      - DB_PASS=passwordexample
+      - DB_NAME=db_technology_stack_000000_dev
+    volumes:
+      - ./docker/databases/postgresql:/var/lib/postgresql
