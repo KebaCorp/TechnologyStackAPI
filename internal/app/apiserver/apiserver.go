@@ -71,24 +71,11 @@ func (s *APIServer) configureRouter() {
 	s.router.HandleFunc("/api/v1/technologies", s.handleTechnologies())
 }
 
-// func (s *server) authenticateUser(next http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		session, err := s.sessionStore.Get(r, sessionName)
-// 		if err != nil {
-// 			s.error(w, r, http.StatusInternalServerError, err)
-// 			return
-// 		}
-// 	})
-//
-// 	id, ok := session.Values["user_id"]
-// 	if !ok {
-// 		s.error
-// 	}
-// }
-
 func (s *APIServer) handleTechnologies() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		t, err := s.store.Technology().FindAll()
+		// t, err := s.store.Technology().FindAll()
+		// t, err := s.store.Stage().FindAll()
+		t, err := s.store.Type().FindAll()
 		js, err := json.Marshal(t)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

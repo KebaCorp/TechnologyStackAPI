@@ -6,6 +6,6 @@ type Stage struct {
 	Title         string
 	IsDeleted     bool
 	CreatorUserId int
-	CreatedAt     int
-	UpdatedAt     int
+	CreatedAt     string
+	UpdatedAt     string
 }

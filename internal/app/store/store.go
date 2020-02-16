@@ -12,6 +12,8 @@ type Store struct {
 	db                   *sql.DB
 	userRepository       *UserRepository
 	technologyRepository *TechnologyRepository
+	stageRepository      *StageRepository
+	typeRepository       *TypeRepository
 }
 
 // New ...
@@ -66,4 +68,30 @@ func (s *Store) Technology() *TechnologyRepository {
 	}
 
 	return s.technologyRepository
+}
+
+// Stage ...
+func (s *Store) Stage() *StageRepository {
+	if s.stageRepository != nil {
+		return s.stageRepository
+	}
+
+	s.stageRepository = &StageRepository{
+		store: s,
+	}
+
+	return s.stageRepository
+}
+
+// Type ...
+func (s *Store) Type() *TypeRepository {
+	if s.typeRepository != nil {
+		return s.typeRepository
+	}
+
+	s.typeRepository = &TypeRepository{
+		store: s,
+	}
+
+	return s.typeRepository
 }
