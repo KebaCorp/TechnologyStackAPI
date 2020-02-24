@@ -33,6 +33,7 @@ func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
 			&t.TypeId,
 			&t.StageId,
 			&t.Title,
+			&t.Image,
 			&t.IsDeprecated,
 			&t.CreatorUserId,
 			&t.CreatedAt,

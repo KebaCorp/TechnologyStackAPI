@@ -2,11 +2,11 @@ package model
 
 // Stage ...
 type Stage struct {
-	ID            int
-	Title         string
-	IsDeleted     bool
-	CreatorUserId int
-	CreatedAt     string
-	UpdatedAt     string
-	Technologies  []*Technology
+	ID            int           `json:"id"`
+	Title         string        `json:"title"`
+	IsDeleted     bool          `json:"isDeleted"`
+	CreatorUserId int           `json:"creatorUserId"`
+	CreatedAt     string        `json:"createdAt"`
+	UpdatedAt     string        `json:"updatedAt"`
+	Technologies  []*Technology `json:"technologies"`
 }
