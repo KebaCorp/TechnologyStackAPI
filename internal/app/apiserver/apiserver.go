@@ -70,13 +70,21 @@ func (s *APIServer) configureStore() error {
 func (s *APIServer) configureRouter() {
 	s.router.Use(handlers.CORS(
 		handlers.AllowedOrigins([]string{s.config.CorsOrigin}),
+		handlers.AllowedHeaders([]string{"content-type"}),
 	))
 
 	s.router.HandleFunc("/api/v1/technologies", s.handleTechnologies())
+
 	s.router.HandleFunc("/api/v1/types", s.handleTypes())
 	s.router.HandleFunc("/api/v1/type/create", s.handleTypeCreate()).Methods(http.MethodPost, http.MethodOptions)
+	s.router.HandleFunc("/api/v1/type/delete", s.handleTypeDelete()).Methods(http.MethodPost, http.MethodOptions)
+
+	s.router.HandleFunc("/api/v1/stages", s.handleStages())
+	s.router.HandleFunc("/api/v1/stage/create", s.handleStageCreate()).Methods(http.MethodPost, http.MethodOptions)
+	s.router.HandleFunc("/api/v1/stage/delete", s.handleStageDelete()).Methods(http.MethodPost, http.MethodOptions)
 }
 
+// Returns all technologies
 func (s *APIServer) handleTechnologies() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		technologies, err := s.store.Technology().FindAll()
@@ -107,6 +115,7 @@ func (s *APIServer) handleTechnologies() http.HandlerFunc {
 	}
 }
 
+// Returns all types
 func (s *APIServer) handleTypes() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		types, err := s.store.Type().FindAll()
@@ -121,16 +130,13 @@ func (s *APIServer) handleTypes() http.HandlerFunc {
 	}
 }
 
+// Create type
 func (s *APIServer) handleTypeCreate() http.HandlerFunc {
 	type request struct {
 		Title string `json:"title"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodOptions {
-			return
-		}
-
 		req := &request{}
 		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			s.error(w, r, http.StatusBadRequest, err)
@@ -142,15 +148,104 @@ func (s *APIServer) handleTypeCreate() http.HandlerFunc {
 			Title:         req.Title,
 			IsDeleted:     false,
 			CreatorUserId: 1,
-			CreatedAt:     "2020.02.20 11:00",
-			UpdatedAt:     "2020.02.20 11:00",
 		}
 
-		if err := s.store.Type().Create(t); err != nil {
+		id, err := s.store.Type().CreateType(t)
+
+		if err != nil {
 			s.error(w, r, http.StatusUnprocessableEntity, err)
 		}
 
-		s.respond(w, r, http.StatusCreated, t)
+		s.respond(w, r, http.StatusCreated, id)
+	}
+}
+
+// Delete type
+func (s *APIServer) handleTypeDelete() http.HandlerFunc {
+	type request struct {
+		ID int `json:"id"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+
+			return
+		}
+
+		if err := s.store.Type().DeleteType(req.ID); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+		}
+
+		s.respond(w, r, http.StatusCreated, true)
+	}
+}
+
+// Returns all stages
+func (s *APIServer) handleStages() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		types, err := s.store.Stage().FindAll()
+
+		if err != nil {
+			s.error(w, r, http.StatusNotFound, err)
+
+			return
+		}
+
+		s.respond(w, r, http.StatusOK, types)
+	}
+}
+
+// Create stage
+func (s *APIServer) handleStageCreate() http.HandlerFunc {
+	type request struct {
+		Title string `json:"title"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+
+			return
+		}
+
+		t := &model.Stage{
+			Title:         req.Title,
+			IsDeleted:     false,
+			CreatorUserId: 1,
+		}
+
+		id, err := s.store.Stage().CreateStage(t)
+
+		if err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+		}
+
+		s.respond(w, r, http.StatusCreated, id)
+	}
+}
+
+// Delete stage
+func (s *APIServer) handleStageDelete() http.HandlerFunc {
+	type request struct {
+		ID int `json:"id"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		req := &request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			s.error(w, r, http.StatusBadRequest, err)
+
+			return
+		}
+
+		if err := s.store.Stage().DeleteStage(req.ID); err != nil {
+			s.error(w, r, http.StatusUnprocessableEntity, err)
+		}
+
+		s.respond(w, r, http.StatusCreated, true)
 	}
 }
 

@@ -39,3 +39,32 @@ func (r *StageRepository) FindAll() ([]*model.Stage, error) {
 
 	return stages, nil
 }
+
+// Create stage ...
+func (r *StageRepository) CreateStage(t *model.Stage) (int, error) {
+	query := `INSERT INTO
+	 stages (title, is_deleted, creator_user_id)
+	 VALUES($1, $2, $3) RETURNING id`
+
+	if err := r.store.db.QueryRow(
+		query,
+		t.Title,
+		t.IsDeleted,
+		t.CreatorUserId,
+	).Scan(&t.ID); err != nil {
+		return 0, err
+	}
+
+	return t.ID, nil
+}
+
+// Delete stage ...
+func (r *StageRepository) DeleteStage(id int) error {
+	query := `DELETE FROM stages WHERE id = $1`
+
+	if _, err := r.store.db.Exec(query, id); err != nil {
+		return err
+	}
+
+	return nil
+}

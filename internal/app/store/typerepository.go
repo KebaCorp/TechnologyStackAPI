@@ -40,18 +40,31 @@ func (r *TypeRepository) FindAll() ([]*model.Type, error) {
 	return types, nil
 }
 
-// Create ...
-func (r *TypeRepository) Create(t *model.Type) error {
+// Create type ...
+func (r *TypeRepository) CreateType(t *model.Type) (int, error) {
 	query := `INSERT INTO
-	 types (title, is_deleted, creator_user_id, created_at, updated_at)
-	 VALUES($1, $2, $3, $4, $5) RETURNING id`
+	 types (title, is_deleted, creator_user_id)
+	 VALUES($1, $2, $3) RETURNING id`
 
-	return r.store.db.QueryRow(
+	if err := r.store.db.QueryRow(
 		query,
 		t.Title,
 		t.IsDeleted,
 		t.CreatorUserId,
-		t.CreatedAt,
-		t.UpdatedAt,
-	).Scan(&t.ID)
+	).Scan(&t.ID); err != nil {
+		return 0, err
+	}
+
+	return t.ID, nil
+}
+
+// Delete type ...
+func (r *TypeRepository) DeleteType(id int) error {
+	query := `DELETE FROM types WHERE id = $1`
+
+	if _, err := r.store.db.Exec(query, id); err != nil {
+		return err
+	}
+
+	return nil
 }
