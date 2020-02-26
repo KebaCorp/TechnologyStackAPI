@@ -3,7 +3,7 @@ CREATE TABLE technologies (
   type_id int not null,
   stage_id int not null,
   title varchar not null,
-  image text null,
+  image text default '' not null,
   is_deprecated boolean default false not null,
   creator_user_id int null,
   created_at timestamp with time zone default current_timestamp not null,

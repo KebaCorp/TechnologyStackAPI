@@ -60,7 +60,7 @@ func (r *TypeRepository) CreateType(t *model.Type) (int, error) {
 
 // Delete type ...
 func (r *TypeRepository) DeleteType(id int) error {
-	query := `DELETE FROM types WHERE id = $1`
+	query := `UPDATE types SET is_deleted = true WHERE id = $1`
 
 	if _, err := r.store.db.Exec(query, id); err != nil {
 		return err

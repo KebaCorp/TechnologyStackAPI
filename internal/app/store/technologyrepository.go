@@ -47,3 +47,42 @@ func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
 
 	return technologies, nil
 }
+
+// Create technology ...
+func (r *TechnologyRepository) CreateTechnology(t *model.Technology) (int, error) {
+	query := `INSERT INTO
+	technologies (
+		type_id,
+		stage_id,
+		title,
+		image,
+		is_deprecated,
+		creator_user_id
+	)
+	VALUES($1, $2, $3, $4, $5, $6) RETURNING id`
+
+	if err := r.store.db.QueryRow(
+		query,
+		t.TypeId,
+		t.StageId,
+		t.Title,
+		t.Image,
+		t.IsDeprecated,
+		t.CreatorUserId,
+	).Scan(&t.ID); err != nil {
+		return 0, err
+	}
+
+	return t.ID, nil
+}
+
+// Delete technology ...
+func (r *TechnologyRepository) DeleteTechnology(id int) error {
+	query := `DELETE FROM technologies WHERE id = $1`
+
+	if _, err := r.store.db.Exec(query, id); err != nil {
+		return err
+	}
+
+	return nil
+}

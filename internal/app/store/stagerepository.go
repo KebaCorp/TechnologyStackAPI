@@ -60,7 +60,7 @@ func (r *StageRepository) CreateStage(t *model.Stage) (int, error) {
 
 // Delete stage ...
 func (r *StageRepository) DeleteStage(id int) error {
-	query := `DELETE FROM stages WHERE id = $1`
+	query := `UPDATE stages SET is_deleted = true WHERE id = $1`
 
 	if _, err := r.store.db.Exec(query, id); err != nil {
 		return err
