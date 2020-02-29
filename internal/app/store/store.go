@@ -8,13 +8,14 @@ import (
 
 // Store ...
 type Store struct {
-	config               *Config
-	db                   *sql.DB
-	userRepository       *UserRepository
-	technologyRepository *TechnologyRepository
-	stageRepository      *StageRepository
-	typeRepository       *TypeRepository
-	projectRepository    *ProjectRepository
+	config                   *Config
+	db                       *sql.DB
+	userRepository           *UserRepository
+	technologyRepository     *TechnologyRepository
+	technologyItemRepository *TechnologyItemRepository
+	stageRepository          *StageRepository
+	typeRepository           *TypeRepository
+	projectRepository        *ProjectRepository
 }
 
 // New ...
@@ -69,6 +70,19 @@ func (s *Store) Technology() *TechnologyRepository {
 	}
 
 	return s.technologyRepository
+}
+
+// Technology item ...
+func (s *Store) TechnologyItem() *TechnologyItemRepository {
+	if s.technologyItemRepository != nil {
+		return s.technologyItemRepository
+	}
+
+	s.technologyItemRepository = &TechnologyItemRepository{
+		store: s,
+	}
+
+	return s.technologyItemRepository
 }
 
 // Stage ...

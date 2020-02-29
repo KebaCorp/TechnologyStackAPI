@@ -81,6 +81,11 @@ func (s *APIServer) configureRouter() {
 	s.router.HandleFunc("/api/v1/technology/create", s.handleTechnologyCreate()).Methods(http.MethodPost, http.MethodOptions)
 	s.router.HandleFunc("/api/v1/technology/delete", s.handleTechnologyDelete()).Methods(http.MethodPost, http.MethodOptions)
 
+	// Technology item handlers
+	s.router.HandleFunc("/api/v1/technology-items", s.handleTechnologyItems())
+	s.router.HandleFunc("/api/v1/technology-item/create", s.handleTechnologyItemCreate()).Methods(http.MethodPost, http.MethodOptions)
+	s.router.HandleFunc("/api/v1/technology-item/delete", s.handleTechnologyItemDelete()).Methods(http.MethodPost, http.MethodOptions)
+
 	// Type handlers
 	s.router.HandleFunc("/api/v1/types", s.handleTypes())
 	s.router.HandleFunc("/api/v1/type/create", s.handleTypeCreate()).Methods(http.MethodPost, http.MethodOptions)
