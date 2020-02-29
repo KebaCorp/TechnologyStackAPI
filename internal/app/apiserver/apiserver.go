@@ -100,6 +100,11 @@ func (s *APIServer) configureRouter() {
 	s.router.HandleFunc("/api/v1/projects", s.handleProjects())
 	s.router.HandleFunc("/api/v1/project/create", s.handleProjectCreate()).Methods(http.MethodPost, http.MethodOptions)
 	s.router.HandleFunc("/api/v1/project/delete", s.handleProjectDelete()).Methods(http.MethodPost, http.MethodOptions)
+
+	// User handlers
+	s.router.HandleFunc("/api/v1/users", s.handleUsers())
+	s.router.HandleFunc("/api/v1/user/create", s.handleUserCreate()).Methods(http.MethodPost, http.MethodOptions)
+	s.router.HandleFunc("/api/v1/user/delete", s.handleUserDelete()).Methods(http.MethodPost, http.MethodOptions)
 }
 
 func (s *APIServer) error(w http.ResponseWriter, r *http.Request, code int, err error) {

@@ -5,6 +5,7 @@ CREATE TABLE users (
   first_name varchar not null,
   last_name varchar not null,
   middle_name varchar not null,
+  image text default '' not null,
   is_active boolean default true not null,
   encrypted_password varchar not null,
   creator_user_id bigint null,
