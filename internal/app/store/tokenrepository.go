@@ -1,8 +1,6 @@
 package store
 
 import (
-	"fmt"
-
 	"github.com/KebaCorp/TechnologyStackAPI/internal/app/model"
 )
 
@@ -15,10 +13,6 @@ type TokenRepository struct {
 func (r *TokenRepository) UpdateOrCreateToken(token *model.Token) (*model.Token, error) {
 	query := `DELETE FROM tokens
 	WHERE user_id = $1 AND user_agent = $2`
-
-	fmt.Println(token.UserId)
-	fmt.Println(token.UserAgent)
-	fmt.Println(token.Ip)
 
 	if _, err := r.store.db.Exec(query, token.UserId, token.UserAgent); err != nil {
 		return nil, err
