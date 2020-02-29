@@ -121,3 +121,12 @@ func (s *APIServer) respond(w http.ResponseWriter, r *http.Request, code int, da
 		json.NewEncoder(w).Encode(data)
 	}
 }
+
+// Get IP
+func GetIP(r *http.Request) string {
+	forwarded := r.Header.Get("X-FORWARDED-FOR")
+	if forwarded != "" {
+		return forwarded
+	}
+	return r.RemoteAddr
+}

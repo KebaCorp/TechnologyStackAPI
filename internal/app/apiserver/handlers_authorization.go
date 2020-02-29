@@ -3,6 +3,9 @@ package apiserver
 import (
 	"encoding/json"
 	"net/http"
+	"time"
+
+	"github.com/KebaCorp/TechnologyStackAPI/internal/app/model"
 )
 
 // Authorization login
@@ -22,13 +25,24 @@ func (s *APIServer) handleAuthorizationLogin() http.HandlerFunc {
 		}
 
 		user, err := s.store.User().FindByUsernameOrEmail(req.Username, req.Username)
-
 		if err != nil {
 			s.error(w, r, http.StatusNotFound, err)
 
 			return
 		}
 
-		s.respond(w, r, http.StatusOK, user)
+		t := &model.Token{
+			UserId:    user.ID,
+			UserAgent: r.Header.Get("User-Agent"),
+			Ip:        GetIP(r),
+			ExpiresAt: time.Now(),
+		}
+
+		token, err := s.store.Token().UpdateOrCreateToken(t)
+		if err != nil {
+			s.error(w, r, http.StatusNotFound, err)
+		}
+
+		s.respond(w, r, http.StatusOK, token)
 	}
 }
