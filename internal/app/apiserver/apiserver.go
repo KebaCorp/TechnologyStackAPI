@@ -90,6 +90,11 @@ func (s *APIServer) configureRouter() {
 	s.router.HandleFunc("/api/v1/stages", s.handleStages())
 	s.router.HandleFunc("/api/v1/stage/create", s.handleStageCreate()).Methods(http.MethodPost, http.MethodOptions)
 	s.router.HandleFunc("/api/v1/stage/delete", s.handleStageDelete()).Methods(http.MethodPost, http.MethodOptions)
+
+	// Project handlers
+	s.router.HandleFunc("/api/v1/projects", s.handleProjects())
+	s.router.HandleFunc("/api/v1/project/create", s.handleProjectCreate()).Methods(http.MethodPost, http.MethodOptions)
+	s.router.HandleFunc("/api/v1/project/delete", s.handleProjectDelete()).Methods(http.MethodPost, http.MethodOptions)
 }
 
 func (s *APIServer) error(w http.ResponseWriter, r *http.Request, code int, err error) {

@@ -14,6 +14,7 @@ type Store struct {
 	technologyRepository *TechnologyRepository
 	stageRepository      *StageRepository
 	typeRepository       *TypeRepository
+	projectRepository    *ProjectRepository
 }
 
 // New ...
@@ -94,4 +95,17 @@ func (s *Store) Type() *TypeRepository {
 	}
 
 	return s.typeRepository
+}
+
+// Project ...
+func (s *Store) Project() *ProjectRepository {
+	if s.projectRepository != nil {
+		return s.projectRepository
+	}
+
+	s.projectRepository = &ProjectRepository{
+		store: s,
+	}
+
+	return s.projectRepository
 }
