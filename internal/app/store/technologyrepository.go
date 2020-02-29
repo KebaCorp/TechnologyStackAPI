@@ -29,7 +29,8 @@ func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
 		created_at,
 		updated_at,
 		is_deleted
-	FROM technologies ORDER BY type_id ASC, stage_id ASC`
+	FROM technologies
+	ORDER BY id ASC`
 
 	rows, err := r.store.db.Query(query)
 

@@ -21,7 +21,8 @@ func (r *TypeRepository) FindAll() ([]*model.Type, error) {
 		updated_at,
 		is_deleted
 	FROM types
-	WHERE is_deleted IS NOT true ORDER BY id ASC`
+	WHERE is_deleted IS NOT true
+	ORDER BY id ASC`
 
 	rows, err := r.store.db.Query(query)
 
@@ -52,9 +53,8 @@ func (r *TypeRepository) FindAll() ([]*model.Type, error) {
 
 // Create type ...
 func (r *TypeRepository) CreateType(t *model.Type) (int, error) {
-	query := `INSERT INTO
-	 types (title, is_deleted, creator_user_id)
-	 VALUES($1, $2, $3) RETURNING id`
+	query := `INSERT INTO types (title, is_deleted, creator_user_id)
+	VALUES($1, $2, $3) RETURNING id`
 
 	if err := r.store.db.QueryRow(
 		query,

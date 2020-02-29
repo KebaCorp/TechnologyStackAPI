@@ -21,7 +21,8 @@ func (r *StageRepository) FindAll() ([]*model.Stage, error) {
 		updated_at,
 		is_deleted
 	FROM stages
-	WHERE is_deleted IS NOT true ORDER BY id ASC`
+	WHERE is_deleted IS NOT true
+	ORDER BY id ASC`
 
 	rows, err := r.store.db.Query(query)
 
