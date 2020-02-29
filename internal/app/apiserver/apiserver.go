@@ -73,6 +73,9 @@ func (s *APIServer) configureRouter() {
 		handlers.AllowedHeaders([]string{"content-type"}),
 	))
 
+	// Authorization handlers
+	s.router.HandleFunc("/api/v1/authorization/login", s.handleAuthorizationLogin())
+
 	// Dashboard handlers
 	s.router.HandleFunc("/api/v1/dashboard", s.handleDashboard())
 
