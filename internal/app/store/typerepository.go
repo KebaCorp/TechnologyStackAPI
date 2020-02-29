@@ -13,7 +13,17 @@ type TypeRepository struct {
 
 // FindAll ...
 func (r *TypeRepository) FindAll() ([]*model.Type, error) {
-	rows, err := r.store.db.Query("SELECT * FROM types WHERE is_deleted IS NOT true ORDER BY id ASC")
+	query := `SELECT
+		id,
+		title,
+		creator_user_id,
+		created_at,
+		updated_at,
+		is_deleted
+	FROM types
+	WHERE is_deleted IS NOT true ORDER BY id ASC`
+
+	rows, err := r.store.db.Query(query)
 
 	if err != nil {
 		return nil, err
@@ -26,10 +36,10 @@ func (r *TypeRepository) FindAll() ([]*model.Type, error) {
 		if err := rows.Scan(
 			&t.ID,
 			&t.Title,
-			&t.IsDeleted,
 			&t.CreatorUserId,
 			&t.CreatedAt,
 			&t.UpdatedAt,
+			&t.IsDeleted,
 		); err != nil {
 			log.Fatal(err)
 		}

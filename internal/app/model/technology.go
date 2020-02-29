@@ -11,4 +11,5 @@ type Technology struct {
 	CreatorUserId int    `json:"creatorUserId"`
 	CreatedAt     string `json:"createdAt"`
 	UpdatedAt     string `json:"updatedAt"`
+	IsDeleted     bool   `json:"isDeleted"`
 }

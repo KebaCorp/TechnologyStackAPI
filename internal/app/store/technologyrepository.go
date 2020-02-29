@@ -18,7 +18,20 @@ type TechnologyRepository struct {
 
 // FindAll ...
 func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
-	rows, err := r.store.db.Query("SELECT * FROM technologies ORDER BY type_id ASC, stage_id ASC")
+	query := `SELECT
+		id,
+		type_id,
+		stage_id,
+		title,
+		image,
+		is_deprecated,
+		creator_user_id,
+		created_at,
+		updated_at,
+		is_deleted
+	FROM technologies ORDER BY type_id ASC, stage_id ASC`
+
+	rows, err := r.store.db.Query(query)
 
 	if err != nil {
 		return nil, err
@@ -38,6 +51,7 @@ func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
 			&t.CreatorUserId,
 			&t.CreatedAt,
 			&t.UpdatedAt,
+			&t.IsDeleted,
 		); err != nil {
 			log.Fatal(err)
 		}

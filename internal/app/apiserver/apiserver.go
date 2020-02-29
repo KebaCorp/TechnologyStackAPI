@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/KebaCorp/TechnologyStackAPI/internal/app/model"
 	"github.com/KebaCorp/TechnologyStackAPI/internal/app/store"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -68,262 +67,29 @@ func (s *APIServer) configureStore() error {
 }
 
 func (s *APIServer) configureRouter() {
+	// CORS middleware
 	s.router.Use(handlers.CORS(
 		handlers.AllowedOrigins([]string{s.config.CorsOrigin}),
 		handlers.AllowedHeaders([]string{"content-type"}),
 	))
 
+	// Dashboard handlers
 	s.router.HandleFunc("/api/v1/dashboard", s.handleDashboard())
 
+	// Technology handlers
 	s.router.HandleFunc("/api/v1/technologies", s.handleTechnologies())
 	s.router.HandleFunc("/api/v1/technology/create", s.handleTechnologyCreate()).Methods(http.MethodPost, http.MethodOptions)
 	s.router.HandleFunc("/api/v1/technology/delete", s.handleTechnologyDelete()).Methods(http.MethodPost, http.MethodOptions)
 
+	// Type handlers
 	s.router.HandleFunc("/api/v1/types", s.handleTypes())
 	s.router.HandleFunc("/api/v1/type/create", s.handleTypeCreate()).Methods(http.MethodPost, http.MethodOptions)
 	s.router.HandleFunc("/api/v1/type/delete", s.handleTypeDelete()).Methods(http.MethodPost, http.MethodOptions)
 
+	// Stage handlers
 	s.router.HandleFunc("/api/v1/stages", s.handleStages())
 	s.router.HandleFunc("/api/v1/stage/create", s.handleStageCreate()).Methods(http.MethodPost, http.MethodOptions)
 	s.router.HandleFunc("/api/v1/stage/delete", s.handleStageDelete()).Methods(http.MethodPost, http.MethodOptions)
-}
-
-// Returns technologies dashboard
-func (s *APIServer) handleDashboard() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		technologies, err := s.store.Technology().FindAll()
-		stages, err := s.store.Stage().FindAll()
-		types, err := s.store.Type().FindAll()
-
-		if err != nil {
-			s.error(w, r, http.StatusNotFound, err)
-
-			return
-		}
-
-		for tsKey, tsValue := range types {
-			for _, stValue := range stages {
-				newStage := &model.Stage{ID: stValue.ID, Title: stValue.Title}
-
-				for _, tchValue := range technologies {
-					if tsValue.ID == tchValue.TypeId && stValue.ID == tchValue.StageId {
-						newStage.Technologies = append(newStage.Technologies, tchValue)
-					}
-				}
-
-				types[tsKey].Stages = append(types[tsKey].Stages, newStage)
-			}
-		}
-
-		s.respond(w, r, http.StatusOK, types)
-	}
-}
-
-// Returns all technologies
-func (s *APIServer) handleTechnologies() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		types, err := s.store.Technology().FindAll()
-
-		if err != nil {
-			s.error(w, r, http.StatusNotFound, err)
-
-			return
-		}
-
-		s.respond(w, r, http.StatusOK, types)
-	}
-}
-
-// Create technology
-func (s *APIServer) handleTechnologyCreate() http.HandlerFunc {
-	type request struct {
-		TypeId  int    `json:"typeId"`
-		StageId int    `json:"stageId"`
-		Title   string `json:"title"`
-		Image   string `json:"image"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-
-			return
-		}
-
-		t := &model.Technology{
-			TypeId:        req.TypeId,
-			StageId:       req.StageId,
-			Title:         req.Title,
-			Image:         req.Image,
-			IsDeprecated:  false,
-			CreatorUserId: 1,
-		}
-
-		id, err := s.store.Technology().CreateTechnology(t)
-
-		if err != nil {
-			s.error(w, r, http.StatusUnprocessableEntity, err)
-		}
-
-		s.respond(w, r, http.StatusCreated, id)
-	}
-}
-
-// Delete technology
-func (s *APIServer) handleTechnologyDelete() http.HandlerFunc {
-	type request struct {
-		ID int `json:"id"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-
-			return
-		}
-
-		if err := s.store.Technology().DeleteTechnology(req.ID); err != nil {
-			s.error(w, r, http.StatusUnprocessableEntity, err)
-		}
-
-		s.respond(w, r, http.StatusCreated, true)
-	}
-}
-
-// Returns all types
-func (s *APIServer) handleTypes() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		types, err := s.store.Type().FindAll()
-
-		if err != nil {
-			s.error(w, r, http.StatusNotFound, err)
-
-			return
-		}
-
-		s.respond(w, r, http.StatusOK, types)
-	}
-}
-
-// Create type
-func (s *APIServer) handleTypeCreate() http.HandlerFunc {
-	type request struct {
-		Title string `json:"title"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-
-			return
-		}
-
-		t := &model.Type{
-			Title:         req.Title,
-			IsDeleted:     false,
-			CreatorUserId: 1,
-		}
-
-		id, err := s.store.Type().CreateType(t)
-
-		if err != nil {
-			s.error(w, r, http.StatusUnprocessableEntity, err)
-		}
-
-		s.respond(w, r, http.StatusCreated, id)
-	}
-}
-
-// Delete type
-func (s *APIServer) handleTypeDelete() http.HandlerFunc {
-	type request struct {
-		ID int `json:"id"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-
-			return
-		}
-
-		if err := s.store.Type().DeleteType(req.ID); err != nil {
-			s.error(w, r, http.StatusUnprocessableEntity, err)
-		}
-
-		s.respond(w, r, http.StatusCreated, true)
-	}
-}
-
-// Returns all stages
-func (s *APIServer) handleStages() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		types, err := s.store.Stage().FindAll()
-
-		if err != nil {
-			s.error(w, r, http.StatusNotFound, err)
-
-			return
-		}
-
-		s.respond(w, r, http.StatusOK, types)
-	}
-}
-
-// Create stage
-func (s *APIServer) handleStageCreate() http.HandlerFunc {
-	type request struct {
-		Title string `json:"title"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-
-			return
-		}
-
-		t := &model.Stage{
-			Title:         req.Title,
-			IsDeleted:     false,
-			CreatorUserId: 1,
-		}
-
-		id, err := s.store.Stage().CreateStage(t)
-
-		if err != nil {
-			s.error(w, r, http.StatusUnprocessableEntity, err)
-		}
-
-		s.respond(w, r, http.StatusCreated, id)
-	}
-}
-
-// Delete stage
-func (s *APIServer) handleStageDelete() http.HandlerFunc {
-	type request struct {
-		ID int `json:"id"`
-	}
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		req := &request{}
-		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-			s.error(w, r, http.StatusBadRequest, err)
-
-			return
-		}
-
-		if err := s.store.Stage().DeleteStage(req.ID); err != nil {
-			s.error(w, r, http.StatusUnprocessableEntity, err)
-		}
-
-		s.respond(w, r, http.StatusCreated, true)
-	}
 }
 
 func (s *APIServer) error(w http.ResponseWriter, r *http.Request, code int, err error) {
