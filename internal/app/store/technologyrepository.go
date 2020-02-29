@@ -23,6 +23,7 @@ func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
 		type_id,
 		stage_id,
 		title,
+		description,
 		image,
 		is_deprecated,
 		creator_user_id,
@@ -30,6 +31,7 @@ func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
 		updated_at,
 		is_deleted
 	FROM technologies
+	WHERE is_deleted IS NOT true
 	ORDER BY id ASC`
 
 	rows, err := r.store.db.Query(query)
@@ -47,6 +49,7 @@ func (r *TechnologyRepository) FindAll() ([]*model.Technology, error) {
 			&t.TypeId,
 			&t.StageId,
 			&t.Title,
+			&t.Description,
 			&t.Image,
 			&t.IsDeprecated,
 			&t.CreatorUserId,
@@ -70,17 +73,19 @@ func (r *TechnologyRepository) CreateTechnology(t *model.Technology) (int, error
 		type_id,
 		stage_id,
 		title,
+		description,
 		image,
 		is_deprecated,
 		creator_user_id
 	)
-	VALUES($1, $2, $3, $4, $5, $6) RETURNING id`
+	VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id`
 
 	if err := r.store.db.QueryRow(
 		query,
 		t.TypeId,
 		t.StageId,
 		t.Title,
+		t.Description,
 		t.Image,
 		t.IsDeprecated,
 		t.CreatorUserId,
@@ -93,7 +98,7 @@ func (r *TechnologyRepository) CreateTechnology(t *model.Technology) (int, error
 
 // Delete technology ...
 func (r *TechnologyRepository) DeleteTechnology(id int) error {
-	query := `DELETE FROM technologies WHERE id = $1`
+	query := `UPDATE technologies SET is_deleted = true WHERE id = $1`
 
 	if _, err := r.store.db.Exec(query, id); err != nil {
 		return err

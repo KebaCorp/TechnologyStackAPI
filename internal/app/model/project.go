@@ -4,6 +4,7 @@ package model
 type Project struct {
 	ID            int    `json:"id"`
 	Title         string `json:"title"`
+	Description   string `json:"description"`
 	Code          string `json:"code"`
 	Image         string `json:"image"`
 	IsActive      bool   `json:"isActive"`

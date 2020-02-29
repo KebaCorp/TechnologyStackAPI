@@ -25,10 +25,11 @@ func (s *APIServer) handleProjects() http.HandlerFunc {
 // Create project
 func (s *APIServer) handleProjectCreate() http.HandlerFunc {
 	type request struct {
-		Title    string `json:"title"`
-		Code     string `json:"code"`
-		Image    string `json:"image"`
-		IsActive string `json:"isActive"`
+		Title       string `json:"title"`
+		Description string `json:"description"`
+		Code        string `json:"code"`
+		Image       string `json:"image"`
+		IsActive    string `json:"isActive"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -41,6 +42,7 @@ func (s *APIServer) handleProjectCreate() http.HandlerFunc {
 
 		t := &model.Project{
 			Title:         req.Title,
+			Description:   req.Description,
 			Code:          req.Code,
 			Image:         req.Image,
 			IsActive:      true,

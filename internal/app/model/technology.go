@@ -6,6 +6,7 @@ type Technology struct {
 	TypeId        int    `json:"typeId"`
 	StageId       int    `json:"stageId"`
 	Title         string `json:"title"`
+	Description   string `json:"description"`
 	Image         string `json:"image"`
 	IsDeprecated  bool   `json:"isDeprecated"`
 	CreatorUserId int    `json:"creatorUserId"`

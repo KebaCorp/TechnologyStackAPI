@@ -3,6 +3,7 @@ CREATE TABLE technology_items (
     technology_id bigint not null,
     parent_id bigint default 0 not null,
     title varchar not null,
+    description text default '' not null,
     creator_user_id bigint null,
     created_at timestamp with time zone default current_timestamp not null,
     updated_at timestamp with time zone default current_timestamp not null,

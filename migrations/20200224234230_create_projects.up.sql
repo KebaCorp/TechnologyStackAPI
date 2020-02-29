@@ -1,6 +1,7 @@
 CREATE TABLE projects (
   id bigserial not null primary key,
   title varchar not null,
+  description text default '' not null,
   code varchar not null unique,
   image text default '' not null,
   is_active boolean default false not null,

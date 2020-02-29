@@ -25,10 +25,12 @@ func (s *APIServer) handleTechnologies() http.HandlerFunc {
 // Create technology
 func (s *APIServer) handleTechnologyCreate() http.HandlerFunc {
 	type request struct {
-		TypeId  int    `json:"typeId"`
-		StageId int    `json:"stageId"`
-		Title   string `json:"title"`
-		Image   string `json:"image"`
+		TypeId       int    `json:"typeId"`
+		StageId      int    `json:"stageId"`
+		Title        string `json:"title"`
+		Description  string `json:"description"`
+		Image        string `json:"image"`
+		IsDeprecated bool   `json:"isDeprecated"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -43,8 +45,9 @@ func (s *APIServer) handleTechnologyCreate() http.HandlerFunc {
 			TypeId:        req.TypeId,
 			StageId:       req.StageId,
 			Title:         req.Title,
+			Description:   req.Description,
 			Image:         req.Image,
-			IsDeprecated:  false,
+			IsDeprecated:  req.IsDeprecated,
 			CreatorUserId: 1,
 		}
 

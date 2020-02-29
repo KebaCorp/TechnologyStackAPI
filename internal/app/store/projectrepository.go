@@ -16,6 +16,7 @@ func (r *ProjectRepository) FindAll() ([]*model.Project, error) {
 	query := `SELECT
 		id,
 		title,
+		description,
 		code,
 		image,
 		is_active,
@@ -38,6 +39,7 @@ func (r *ProjectRepository) FindAll() ([]*model.Project, error) {
 		if err := rows.Scan(
 			&t.ID,
 			&t.Title,
+			&t.Description,
 			&t.Code,
 			&t.Image,
 			&t.IsActive,
@@ -57,12 +59,13 @@ func (r *ProjectRepository) FindAll() ([]*model.Project, error) {
 // Create project ...
 func (r *ProjectRepository) CreateProject(t *model.Project) (int, error) {
 	query := `INSERT INTO
-	 projects (title, code, image, is_active, creator_user_id)
-	 VALUES($1, $2, $3, $4, $5) RETURNING id`
+	 projects (title, description, code, image, is_active, creator_user_id)
+	 VALUES($1, $2, $3, $4, $5, $6) RETURNING id`
 
 	if err := r.store.db.QueryRow(
 		query,
 		t.Title,
+		t.Description,
 		t.Code,
 		t.Image,
 		t.IsActive,

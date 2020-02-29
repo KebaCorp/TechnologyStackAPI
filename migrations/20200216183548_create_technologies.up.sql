@@ -3,6 +3,7 @@ CREATE TABLE technologies (
   type_id bigint not null,
   stage_id bigint not null,
   title varchar not null,
+  description text default '' not null,
   image text default '' not null,
   is_deprecated boolean default false not null,
   creator_user_id bigint null,
