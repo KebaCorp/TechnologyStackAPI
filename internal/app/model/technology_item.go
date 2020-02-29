@@ -5,7 +5,7 @@ type TechnologyItem struct {
 	ID            int    `json:"id"`
 	TechnologyId  int    `json:"technologyId"`
 	ParentId      int    `json:"parentId"`
-	Title         int    `json:"title"`
+	Title         string `json:"title"`
 	Description   string `json:"description"`
 	CreatorUserId int    `json:"creatorUserId"`
 	CreatedAt     string `json:"createdAt"`
