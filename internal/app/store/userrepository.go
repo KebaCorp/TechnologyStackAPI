@@ -13,6 +13,14 @@ type UserRepository struct {
 
 // Create user ...
 func (r *UserRepository) CreateUser(u *model.User) (*model.User, error) {
+	if err := u.Validate(); err != nil {
+		return nil, err
+	}
+
+	if err := u.BeforeCreate(); err != nil {
+		return nil, err
+	}
+
 	query := `INSERT INTO users (
 		email,
 		username,
@@ -40,6 +48,8 @@ func (r *UserRepository) CreateUser(u *model.User) (*model.User, error) {
 	).Scan(&u.ID); err != nil {
 		return nil, err
 	}
+
+	u.Sanitize()
 
 	return u, nil
 }
@@ -83,6 +93,8 @@ func (r *UserRepository) FindByUsernameOrEmail(username string, email string) (*
 		return nil, err
 	}
 
+	u.Sanitize()
+
 	return u, nil
 }
 
@@ -123,6 +135,8 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 	); err != nil {
 		return nil, err
 	}
+
+	u.Sanitize()
 
 	return u, nil
 }
@@ -170,6 +184,7 @@ func (r *UserRepository) FindAll() ([]*model.User, error) {
 			log.Fatal(err)
 		}
 
+		u.Sanitize()
 		users = append(users, u)
 	}
 

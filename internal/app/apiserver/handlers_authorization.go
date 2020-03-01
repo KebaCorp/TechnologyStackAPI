@@ -31,18 +31,24 @@ func (s *APIServer) handleAuthorizationLogin() http.HandlerFunc {
 			return
 		}
 
-		t := &model.Token{
-			UserId:    user.ID,
-			UserAgent: r.Header.Get("User-Agent"),
-			Ip:        GetIP(r),
-			ExpiresAt: time.Now(),
-		}
-
-		token, err := s.store.Token().UpdateOrCreateToken(t)
+		token, err := s.store.Token().UpdateOrCreateToken(
+			user,
+			r.Header.Get("User-Agent"),
+			GetIP(r),
+			time.Now(),
+		)
 		if err != nil {
 			s.error(w, r, http.StatusNotFound, err)
 		}
 
-		s.respond(w, r, http.StatusOK, token)
+		type response struct {
+			Token *model.Token `json:"token"`
+			User  *model.User  `json:"user"`
+		}
+
+		s.respond(w, r, http.StatusOK, &response{
+			Token: token,
+			User:  user,
+		})
 	}
 }

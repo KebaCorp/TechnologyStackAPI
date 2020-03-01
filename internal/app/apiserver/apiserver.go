@@ -70,7 +70,7 @@ func (s *APIServer) configureRouter() {
 	// CORS middleware
 	s.router.Use(handlers.CORS(
 		handlers.AllowedOrigins([]string{s.config.CorsOrigin}),
-		handlers.AllowedHeaders([]string{"content-type"}),
+		handlers.AllowedHeaders([]string{"content-type", "authorization"}),
 	))
 
 	// Authorization handlers
