@@ -7,7 +7,7 @@ type Type struct {
 	CreatorUserId int           `json:"creatorUserId"`
 	CreatedAt     string        `json:"createdAt"`
 	UpdatedAt     string        `json:"updatedAt"`
+	IsDeleted     bool          `json:"isDeleted"`
 	Stages        []*Stage      `json:"stages"`
 	Technologies  []*Technology `json:"technologies"`
-	IsDeleted     bool          `json:"isDeleted"`
 }

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package api;
+
+import "empty.proto";
+import "type.proto";
+
+service ApiService {
+    rpc dashboard(Empty) returns (Type);
+    rpc types(Empty) returns (Type);
+}

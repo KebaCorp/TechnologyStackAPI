@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package api;
+
+message Technology {
+    int64 id = 1;
+    int64 typeId = 2;
+    int64 stageId = 3;
+    string title = 4;
+    string description = 5;
+    string image = 6;
+    bool isDeprecated = 7;
+    int64 creatorUserId = 8;
+    string createdAt = 9;
+    int64 updatedAt = 10;
+    bool isDeleted = 11;
+}

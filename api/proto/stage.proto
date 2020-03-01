@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package api;
+
+import "technology.proto";
+
+message Stage {
+    int64 id = 1;
+    string title = 2;
+    int64 creatorUserId = 3;
+    string createdAt = 4;
+    string updatedAt = 5;
+    bool isDeleted = 6;
+    repeated Technology technology = 7;
+}
